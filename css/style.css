@@ -1242,4 +1242,41 @@ body::after {
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
+/* Mode Selection Buttons Contrast Fix */
+.mode-btn-training {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+    border: 1px solid #10b981 !important;
+}
+.mode-btn-training:hover {
+    background: #10b981 !important;
+    color: #030712 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
+    font-weight: 700 !important;
+}
+
+.mode-btn-survival {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid #f59e0b !important;
+}
+.mode-btn-survival:hover {
+    background: #f59e0b !important;
+    color: #030712 !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6) !important;
+    font-weight: 700 !important;
+}
+
+.mode-btn-hardcore {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+    border: 1px solid #ef4444 !important;
+}
+.mode-btn-hardcore:hover {
+    background: #ef4444 !important;
+    color: #030712 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6) !important;
+    font-weight: 700 !important;
+}
+
 
