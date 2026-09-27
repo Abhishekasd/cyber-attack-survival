@@ -1,7 +1,49 @@
-/**
- * Cyber Attack Survival
- * Main Application Logic & Game Systems
- */
+// Sound Synthesizer Engine (Web Audio API - Zero External Files)
+window.soundEngine = {
+    muted: false,
+    ctx: null,
+    getCtx: function() {
+        if (!this.ctx && typeof AudioContext !== 'undefined') {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        return this.ctx;
+    },
+    playTone: function(freq, type, duration, vol) {
+        if (this.muted) return;
+        try {
+            const ctx = this.getCtx();
+            if (!ctx) return;
+            if (ctx.state === 'suspended') ctx.resume();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(vol || 0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        } catch (_) {}
+    },
+    playClick: function() { this.playTone(800, 'sine', 0.05, 0.04); },
+    playSuccess: function() {
+        this.playTone(523.25, 'triangle', 0.1, 0.08);
+        setTimeout(() => this.playTone(659.25, 'triangle', 0.15, 0.08), 80);
+    },
+    playAlarm: function() {
+        this.playTone(320, 'sawtooth', 0.12, 0.06);
+        setTimeout(() => this.playTone(240, 'sawtooth', 0.18, 0.06), 100);
+    },
+    playDamage: function() {
+        this.playTone(140, 'square', 0.2, 0.08);
+    },
+    playUpgrade: function() {
+        this.playTone(440, 'sine', 0.08, 0.06);
+        setTimeout(() => this.playTone(880, 'sine', 0.15, 0.06), 70);
+    }
+};
 
 // Global Game State
 window.gameState = {
@@ -148,6 +190,20 @@ window.updateDashboard = function updateDashboard() {
             }
         }
     }
+
+    const barHealth = document.getElementById('bar-health');
+    if (barHealth) {
+        const pct = Math.max(0, Math.min(100, gameState.health));
+        barHealth.style.width = pct + '%';
+        if (pct >= 70) barHealth.style.backgroundColor = '#10b981';
+        else if (pct >= 40) barHealth.style.backgroundColor = '#f59e0b';
+        else barHealth.style.backgroundColor = '#ef4444';
+    }
+
+    const barSecurity = document.getElementById('bar-security');
+    if (barSecurity) {
+        barSecurity.style.width = Math.max(0, Math.min(100, gameState.securityLevel)) + '%';
+    }
 };
 
 // Employee Risk Level
@@ -198,6 +254,7 @@ window.trainEmployee = function trainEmployee(index) {
     const cost = 5000;
     if (gameState.budget < cost) {
         addLog('[TRAINING] Insufficient budget for employee training.');
+        if (window.soundEngine) soundEngine.playDamage();
         return;
     }
     const emp = gameState.employees[index];
@@ -207,6 +264,7 @@ window.trainEmployee = function trainEmployee(index) {
     }
     gameState.budget -= cost;
     emp.awareness = Math.min(100, emp.awareness + 25);
+    if (window.soundEngine) soundEngine.playUpgrade();
     updateDashboard();
     renderEmployees();
     addLog(`[TRAINING] ${emp.name} trained! Awareness increased to ${emp.awareness}%.`);
@@ -260,6 +318,7 @@ window.purchaseUpgrade = function purchaseUpgrade(type) {
 
     if (gameState.budget < cost) {
         addLog(`[UPGRADE] Insufficient budget for ${type.toUpperCase()}. Required: ₹${cost.toLocaleString()}`);
+        if (window.soundEngine) soundEngine.playDamage();
         return;
     }
 
@@ -270,6 +329,7 @@ window.purchaseUpgrade = function purchaseUpgrade(type) {
 
     gameState.budget -= cost;
     gameState.upgrades[type] = true;
+    if (window.soundEngine) soundEngine.playUpgrade();
 
     if (type === 'firewall') {
         gameState.firewallLevel += 1;
@@ -326,6 +386,7 @@ window.applyDamage = function applyDamage(amount, reason) {
     const adjustedDamage = Math.round(amount * multiplier);
     gameState.health = Math.max(0, Math.min(100, gameState.health - adjustedDamage));
     updateDashboard();
+    if (window.soundEngine) soundEngine.playDamage();
     if (reason) {
         addLog(`[DAMAGE] ${reason} dealt ${adjustedDamage} damage (${amount} × ${multiplier})`);
     }
@@ -564,6 +625,7 @@ window.generateRandomIncident = function generateRandomIncident() {
 };
 
 window.generatePhishingIncident = function generatePhishingIncident() {
+    if (window.soundEngine) soundEngine.playAlarm();
     const initialBtns = document.getElementById('initial-incident-btns');
     if (initialBtns) initialBtns.style.display = 'none';
     const incidentDisplay = document.getElementById('incident-display');
@@ -591,6 +653,7 @@ window.generatePhishingIncident = function generatePhishingIncident() {
 };
 
 window.generateMalwareIncident = function generateMalwareIncident() {
+    if (window.soundEngine) soundEngine.playAlarm();
     const initialBtns = document.getElementById('initial-incident-btns');
     if (initialBtns) initialBtns.style.display = 'none';
     const incidentDisplay = document.getElementById('incident-display');
@@ -617,6 +680,7 @@ window.generateMalwareIncident = function generateMalwareIncident() {
 };
 
 window.generateWeakPasswordIncident = function generateWeakPasswordIncident() {
+    if (window.soundEngine) soundEngine.playAlarm();
     const initialBtns = document.getElementById('initial-incident-btns');
     if (initialBtns) initialBtns.style.display = 'none';
     const incidentDisplay = document.getElementById('incident-display');
@@ -643,6 +707,7 @@ window.generateWeakPasswordIncident = function generateWeakPasswordIncident() {
 };
 
 window.generateSuspiciousUsbIncident = function generateSuspiciousUsbIncident() {
+    if (window.soundEngine) soundEngine.playAlarm();
     const initialBtns = document.getElementById('initial-incident-btns');
     if (initialBtns) initialBtns.style.display = 'none';
     const incidentDisplay = document.getElementById('incident-display');
@@ -670,6 +735,7 @@ window.generateSuspiciousUsbIncident = function generateSuspiciousUsbIncident() 
 };
 
 window.generateRansomwareIncident = function generateRansomwareIncident() {
+    if (window.soundEngine) soundEngine.playAlarm();
     const initialBtns = document.getElementById('initial-incident-btns');
     if (initialBtns) initialBtns.style.display = 'none';
     const incidentDisplay = document.getElementById('incident-display');
@@ -711,12 +777,14 @@ window.handleDecision = function handleDecision(action, type) {
             updateThreatLevel('Phishing', 'NONE');
             feedback = '<p class="status-secure">✓ THREAT NEUTRALIZED</p><p>The phishing attempt was reported to the security team.</p>';
             addLog('[PHISHING] Player reported the attack.');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'delete') {
             gameState.threatsDetected += 1;
             gameState.score += 300;
             updateThreatLevel('Phishing', 'NONE');
             feedback = '<p class="status-secure">✓ EMAIL REMOVED</p><p>The suspicious email was safely deleted.</p>';
             addLog('[PHISHING] Player deleted the email.');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'open') {
             applyDamage(20, 'Phishing');
             gameState.threatsMissed += 1;
@@ -735,6 +803,7 @@ window.handleDecision = function handleDecision(action, type) {
             updateThreatLevel('Malware', 'NONE');
             feedback = '<p class="status-secure">✓ MALWARE QUARANTINED</p><p>The suspicious file was isolated successfully.</p>';
             addLog('[MALWARE] Malware quarantined successfully.');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'execute') {
             applyDamage(30, 'Malware');
             gameState.threatsMissed += 1;
@@ -758,12 +827,14 @@ window.handleDecision = function handleDecision(action, type) {
             gameState.securityLevel = Math.min(100, gameState.securityLevel + 5);
             feedback = '<p class="status-secure">✓ PASSWORD SECURED</p><p>The weak password was replaced with a stronger password.</p>';
             addLog('[PASSWORD] Weak password changed. Security +5');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'disable') {
             gameState.threatsDetected += 1;
             gameState.score += 300;
             gameState.securityLevel = Math.min(100, gameState.securityLevel + 3);
             feedback = '<p class="status-secure">✓ ACCOUNT DISABLED</p><p>The vulnerable account has been disabled.</p>';
             addLog('[PASSWORD] Vulnerable account disabled. Security +3');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'keep') {
             applyDamage(10, 'Weak Password');
             gameState.securityLevel = Math.max(0, gameState.securityLevel - 5);
@@ -783,6 +854,7 @@ window.handleDecision = function handleDecision(action, type) {
             updateThreatLevel('USB', 'NONE');
             feedback = '<p class="status-secure">✓ USB SCANNED</p><p>The device was scanned before being connected to the network.</p>';
             addLog('[USB] Device scanned and secured. Security +3');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'format') {
             gameState.threatsDetected += 1;
             gameState.score += 300;
@@ -790,6 +862,7 @@ window.handleDecision = function handleDecision(action, type) {
             updateThreatLevel('USB', 'NONE');
             feedback = '<p class="status-secure">✓ USB FORMATTED</p><p>The suspicious device was safely erased.</p>';
             addLog('[USB] Device formatted. Security +2');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'plug') {
             applyDamage(15, 'Suspicious USB');
             gameState.securityLevel = Math.max(0, gameState.securityLevel - 5);
@@ -811,6 +884,7 @@ window.handleDecision = function handleDecision(action, type) {
                 updateThreatLevel('Ransomware', 'NONE');
                 feedback = '<p class="status-secure">✓ SYSTEM RESTORED FROM BACKUP</p><p>All encrypted files were successfully recovered without paying ransom!</p>';
                 addLog('[RANSOMWARE] Attack defeated using backup system! +1000 score');
+                if (window.soundEngine) soundEngine.playSuccess();
             } else {
                 applyDamage(40, 'Ransomware');
                 gameState.threatsMissed += 1;
@@ -824,6 +898,7 @@ window.handleDecision = function handleDecision(action, type) {
             updateThreatLevel('Ransomware', 'MEDIUM');
             feedback = '<p class="status-secure">✓ NETWORK ISOLATED</p><p>Spread was halted, but local files were damaged.</p>';
             addLog('[RANSOMWARE] Network isolated.');
+            if (window.soundEngine) soundEngine.playSuccess();
         } else if (action === 'pay') {
             gameState.budget = Math.max(0, gameState.budget - 20000);
             applyDamage(25, 'Ransomware');
@@ -961,6 +1036,35 @@ window.handleEventChoice = function handleEventChoice(eventId, choiceIndex) {
 
 // Initialize DOM listeners when document ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Sound toggle listener
+    const soundBtn = document.getElementById('sound-toggle-btn');
+    if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+            soundEngine.muted = !soundEngine.muted;
+            soundBtn.textContent = soundEngine.muted ? '🔇 SOUND: OFF' : '🔊 SOUND: ON';
+            if (!soundEngine.muted) soundEngine.playClick();
+        });
+    }
+
+    // Keyboard incident hotkeys (1, 2, 3, 4)
+    document.addEventListener('keydown', (e) => {
+        if (['1', '2', '3', '4'].includes(e.key)) {
+            const index = parseInt(e.key) - 1;
+            const actionBtns = document.querySelectorAll('#incident-actions .action-btn:not(:disabled)');
+            if (actionBtns && actionBtns[index]) {
+                soundEngine.playClick();
+                actionBtns[index].click();
+            }
+        }
+    });
+
+    // Button click sound effect delegation
+    document.body.addEventListener('click', (e) => {
+        if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) {
+            soundEngine.playClick();
+        }
+    });
+
     // Mode selection buttons listener
     document.querySelectorAll('.mode-card button').forEach(btn => {
         btn.addEventListener('click', (e) => {

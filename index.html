@@ -96,19 +96,23 @@
 
     <div id="dashboard-screen" class="dashboard-container" style="display: none;">
         <header class="dashboard-header">
-            <h2>CYBER DEFENSE CENTER</h2>
-            <div class="game-status">
-                <span id="mode-indicator" style="margin-right: 1rem;">MODE: 🟡 SURVIVAL</span>
-                GAME STATUS: <span id="network-status" class="status-secure">NETWORK SECURE</span>
+            <div>
+                <h2>CYBER DEFENSE CENTER</h2>
+                <span id="mode-indicator" style="margin-right: 1rem; font-size: 0.95rem;">MODE: 🟡 SURVIVAL</span>
+            </div>
+            <div class="game-status" style="display: flex; align-items: center; gap: 1rem;">
+                <div>STATUS: <span id="network-status" class="status-secure">NETWORK SECURE</span></div>
+                <button id="sound-toggle-btn" class="cyber-button small-btn sound-toggle-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-top: 0;">🔊 SOUND: ON</button>
             </div>
         </header>
 
         <section class="status-cards-grid">
             <div class="status-card">
                 <div class="card-icon">🛡️</div>
-                <div class="card-info">
+                <div class="card-info" style="width: 100%;">
                     <span class="card-label">Security Health</span>
                     <span class="card-value" id="val-health">100 / 100</span>
+                    <div class="progress-bar-container"><div id="bar-health" class="progress-bar-fill fill-health" style="width: 100%;"></div></div>
                 </div>
             </div>
             <div class="status-card">
@@ -134,9 +138,10 @@
             </div>
             <div class="status-card">
                 <div class="card-icon">🔐</div>
-                <div class="card-info">
+                <div class="card-info" style="width: 100%;">
                     <span class="card-label">Security Level</span>
                     <span class="card-value" id="val-security">40%</span>
+                    <div class="progress-bar-container"><div id="bar-security" class="progress-bar-fill fill-security" style="width: 40%;"></div></div>
                 </div>
             </div>
             <div class="status-card">
