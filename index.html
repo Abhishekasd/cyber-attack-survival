@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A cybersecurity survival game where players defend a virtual company against cyber attacks and security incidents.">
+    <title>Cyber Attack Survival</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="landing-screen" class="terminal-container">
+        <header class="header">
+            <h1 class="glitch-text" data-text="CYBER ATTACK SURVIVAL">CYBER ATTACK SURVIVAL</h1>
+            <p class="subtitle">"Defend the network. Survive the attack."</p>
+        </header>
+        
+        <main class="main-content">
+            <div class="status-panel">
+                <div class="status-indicator">
+                    <span class="dot blink"></span> SYSTEM STANDBY
+                </div>
+            </div>
+            
+            <button id="start-game-btn" class="cyber-button">START GAME</button>
+        </main>
+        
+        <footer class="footer">
+            <p>SECURE CONNECTION ESTABLISHED // V1.0.0</p>
+        </footer>
+    </div>
+
+    <!-- PART 1 — MODE SELECTION SCREEN -->
+    <div id="mode-selection-screen" class="terminal-container" style="display: none;">
+        <header class="header">
+            <h1 class="glitch-text" data-text="SELECT GAME MODE">SELECT GAME MODE</h1>
+            <p class="subtitle">"Choose your difficulty level"</p>
+        </header>
+
+        <main class="main-content" style="max-width: 1200px; margin: 2rem auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 2rem;">
+
+                <!-- TRAINING MODE -->
+                <div class="mode-card" style="background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; padding: 2rem; border-radius: 8px;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">🟢</div>
+                    <h2 style="color: #10b981; text-align: center; font-size: 1.5rem; margin-bottom: 1rem;">TRAINING MODE</h2>
+                    <p style="text-align: center; margin-bottom: 1rem; color: var(--text-main);">Learn the basics of cyber defense with reduced penalties.</p>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #10b981; font-weight: bold;">DIFFICULTY: EASY</p>
+                    <div class="mode-info" style="text-align: left; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <p>• Starting Budget: ₹60,000</p>
+                        <p>• Starting Security: 50%</p>
+                        <p>• Damage: 75%</p>
+                    </div>
+                    <button class="cyber-button" data-mode="training" style="width: 100%; background: #10b981;">SELECT MODE</button>
+                </div>
+
+                <!-- SURVIVAL MODE -->
+                <div class="mode-card" style="background: rgba(251, 191, 36, 0.1); border: 2px solid #f59e0b; padding: 2rem; border-radius: 8px;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">🟡</div>
+                    <h2 style="color: #f59e0b; text-align: center; font-size: 1.5rem; margin-bottom: 1rem;">SURVIVAL MODE</h2>
+                    <p style="text-align: center; margin-bottom: 1rem; color: var(--text-main);">Defend your company against realistic cyber attacks.</p>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #f59e0b; font-weight: bold;">DIFFICULTY: NORMAL</p>
+                    <div class="mode-info" style="text-align: left; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <p>• Starting Budget: ₹50,000</p>
+                        <p>• Starting Security: 40%</p>
+                        <p>• Damage: 100%</p>
+                    </div>
+                    <button class="cyber-button" data-mode="survival" style="width: 100%; background: #f59e0b;">SELECT MODE</button>
+                </div>
+
+                <!-- HARDCORE MODE -->
+                <div class="mode-card" style="background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; padding: 2rem; border-radius: 8px;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">🔴</div>
+                    <h2 style="color: #ef4444; text-align: center; font-size: 1.5rem; margin-bottom: 1rem;">HARDCORE MODE</h2>
+                    <p style="text-align: center; margin-bottom: 1rem; color: var(--text-main);">Extreme difficulty. Every mistake can destroy your network.</p>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #ef4444; font-weight: bold;">DIFFICULTY: HARD</p>
+                    <div class="mode-info" style="text-align: left; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <p>• Starting Budget: ₹40,000</p>
+                        <p>• Starting Security: 30%</p>
+                        <p>• Damage: 125%</p>
+                    </div>
+                    <button class="cyber-button" data-mode="hardcore" style="width: 100%; background: #ef4444;">SELECT MODE</button>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>SELECT YOUR PREFERRED DIFFICULTY // V1.0.0</p>
+        </footer>
+    </div>
+
+    <div id="dashboard-screen" class="dashboard-container" style="display: none;">
+        <header class="dashboard-header">
+            <h2>CYBER DEFENSE CENTER</h2>
+            <div class="game-status">
+                <span id="mode-indicator" style="margin-right: 1rem;">MODE: 🟡 SURVIVAL</span>
+                GAME STATUS: <span id="network-status" class="status-secure">NETWORK SECURE</span>
+            </div>
+        </header>
+
+        <section class="status-cards-grid">
+            <div class="status-card">
+                <div class="card-icon">🛡️</div>
+                <div class="card-info">
+                    <span class="card-label">Security Health</span>
+                    <span class="card-value" id="val-health">100 / 100</span>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="card-icon">💰</div>
+                <div class="card-info">
+                    <span class="card-label">Security Budget</span>
+                    <span class="card-value" id="val-budget">₹50,000</span>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="card-icon">👥</div>
+                <div class="card-info">
+                    <span class="card-label">Users</span>
+                    <span class="card-value" id="val-users">12</span>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="card-icon">🖥️</div>
+                <div class="card-info">
+                    <span class="card-label">Devices</span>
+                    <span class="card-value" id="val-devices">8</span>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="card-icon">🔐</div>
+                <div class="card-info">
+                    <span class="card-label">Security Level</span>
+                    <span class="card-value" id="val-security">40%</span>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="card-icon">👨‍💻</div>
+                <div class="card-info">
+                    <span class="card-label">Security Staff</span>
+                    <span class="card-value" id="val-staff">2</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="dashboard-bottom">
+            <div class="dashboard-sidebar">
+                <section class="threats-section">
+                    <h3>ACTIVE THREATS</h3>
+                    <ul class="threat-list">
+                        <li><span>Phishing</span> <span class="threat-none">NONE</span></li>
+                        <li><span>Malware</span> <span class="threat-none">NONE</span></li>
+                        <li><span>USB</span> <span class="threat-none">NONE</span></li>
+                        <li><span>Ransomware</span> <span class="threat-none">NONE</span></li>
+                    </ul>
+                </section>
+
+                <section class="threats-section">
+                    <h3>SECURITY UPGRADES</h3>
+                    <div class="upgrade-buttons">
+                        <button id="upgrade-firewall" class="upgrade-btn" data-cost="15000">
+                            <span>UPGRADE FIREWALL</span>
+                            <span class="upgrade-cost">₹15,000</span>
+                        </button>
+                        <button id="upgrade-antivirus" class="upgrade-btn" data-cost="10000">
+                            <span>INSTALL ANTIVIRUS</span>
+                            <span class="upgrade-cost">₹10,000</span>
+                        </button>
+                        <button id="upgrade-training" class="upgrade-btn" data-cost="8000">
+                            <span>EMPLOYEE TRAINING</span>
+                            <span class="upgrade-cost">₹8,000</span>
+                        </button>
+                        <button id="upgrade-backup" class="upgrade-btn" data-cost="12000">
+                            <span>BACKUP SYSTEM</span>
+                            <span class="upgrade-cost">₹12,000</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="log-section">
+                    <h3>SECURITY LOG</h3>
+                    <div id="security-log" class="security-log">
+                        <!-- Logs will be injected here -->
+                    </div>
+                </section>
+
+                <section class="threats-section">
+                    <h3>👥 EMPLOYEE SECURITY</h3>
+                    <div id="employee-list" class="employee-list">
+                        <!-- Employee cards will be injected here -->
+                    </div>
+                </section>
+
+                <section class="threats-section">
+                    <h3>🎲 RANDOM SECURITY EVENTS</h3>
+                    <button id="generate-event-btn" class="upgrade-btn" style="margin-bottom: 1rem;">
+                        <span>GENERATE RANDOM EVENT</span>
+                    </button>
+                    <div id="current-event-display" class="current-event-display">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">No event generated yet.</p>
+                    </div>
+                    <h4 style="font-size: 1rem; color: var(--primary-color); margin-top: 1rem; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(16, 185, 129, 0.2); padding-bottom: 0.5rem;">EVENT HISTORY</h4>
+                    <div id="event-history" class="event-history">
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">No events yet.</p>
+                    </div>
+                </section>
+            </div>
+
+            <div class="dashboard-main">
+        <div id="save-indicator" style="position: absolute; bottom: 1rem; right: 1rem; opacity: 0; transition: opacity 0.3s; color: #10b981; font-size: 0.8rem; z-index: 100;">💾 GAME SAVED</div>
+                <section class="incident-section">
+                    <h3>SYSTEM MONITOR</h3>
+                    <div id="incident-display" class="incident-monitor">
+                        <p>No active incident.</p>
+                        <p>Waiting for incoming security events...</p>
+                    </div>
+                    <div id="incident-actions" class="incident-actions">
+                        <!-- Action buttons will be injected here -->
+                    </div>
+                    <div id="initial-incident-btns" style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button id="simulate-incident-btn" class="cyber-button small-btn simulate-btn" style="margin-top: 0; flex: 1;">SIMULATE INCIDENT</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="js/app.js"></script>
+    <script src="js/step17-final.js"></script>
+    <script src="js/step19-save.js"></script>
+</body>
+</html>

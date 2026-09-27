@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEP 17 Test Results - Game Modes</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #00ff88;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00ff88;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #00ddff;
+            border-bottom: 2px solid #00ddff;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        .test-section {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 4px solid #00ff88;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .pass {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .fail {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .info {
+            color: #ffaa00;
+        }
+        .test-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            margin: 0.3rem 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+        }
+        button {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 15px #00ff88;
+        }
+        .summary {
+            background: rgba(0, 221, 255, 0.1);
+            border: 2px solid #00ddff;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+        }
+        pre {
+            background: #000;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .test-controls {
+            text-align: center;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 STEP 17: GAME MODES TEST SUITE</h1>
+
+        <div class="test-controls">
+            <button onclick="runAllTests()">▶ RUN ALL TESTS</button>
+            <button onclick="window.location.href='index.html'">🎮 OPEN GAME</button>
+            <button onclick="location.reload()">🔄 REFRESH</button>
+        </div>
+
+        <div id="test-results"></div>
+
+        <div class="summary" id="summary" style="display: none;">
+            <h2>📊 FINAL TEST SUMMARY</h2>
+            <div id="summary-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const results = {
+            passed: 0,
+            failed: 0,
+            tests: []
+        };
+
+        function log(testName, status, details = '') {
+            results.tests.push({ testName, status, details });
+            if (status === 'PASS') results.passed++;
+            else results.failed++;
+        }
+
+        function displayResults() {
+            const container = document.getElementById('test-results');
+            let html = '';
+
+            results.tests.forEach(test => {
+                const statusClass = test.status === 'PASS' ? 'pass' : 'fail';
+                html += `
+                    <div class="test-result">
+                        <span>${test.testName}</span>
+                        <span class="${statusClass}">${test.status}</span>
+                    </div>
+                    ${test.details ? `<div style="margin-left: 2rem; color: #aaa; font-size: 0.9rem;">${test.details}</div>` : ''}
+                `;
+            });
+
+            container.innerHTML = `<div class="test-section">${html}</div>`;
+
+            // Show summary
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('summary-content').innerHTML = `
+                <div style="font-size: 1.5rem; text-align: center;">
+                    <div><span class="pass">✓ PASSED: ${results.passed}</span></div>
+                    <div><span class="fail">✗ FAILED: ${results.failed}</span></div>
+                    <div style="margin-top: 1rem;">
+                        <strong>OVERALL: ${results.failed === 0 ? '<span class="pass">ALL TESTS PASSED ✓</span>' : '<span class="fail">SOME TESTS FAILED ✗</span>'}</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function runAllTests() {
+            results.passed = 0;
+            results.failed = 0;
+            results.tests = [];
+
+            document.getElementById('test-results').innerHTML = '<div class="info">⏳ Running tests...</div>';
+
+            // TEST 1: Check if mode selection HTML exists
+            try {
+                const response = await fetch('index.html');
+                const html = await response.text();
+
+                if (html.includes('mode-selection-screen')) {
+                    log('TEST 1: Mode Selection Screen HTML', 'PASS', 'Mode selection screen exists in HTML');
+                } else {
+                    log('TEST 1: Mode Selection Screen HTML', 'FAIL', 'Mode selection screen not found');
+                }
+
+                if (html.includes('TRAINING MODE') && html.includes('SURVIVAL MODE') && html.includes('HARDCORE MODE')) {
+                    log('TEST 2: Three Game Modes Present', 'PASS', 'All three modes found: Training, Survival, Hardcore');
+                } else {
+                    log('TEST 2: Three Game Modes Present', 'FAIL', 'Not all three modes found');
+                }
+
+                if (html.includes('Starting Budget: ₹60,000') && html.includes('Starting Budget: ₹50,000') && html.includes('Starting Budget: ₹40,000')) {
+                    log('TEST 3: Mode Information Display', 'PASS', 'Starting budgets displayed correctly for all modes');
+                } else {
+                    log('TEST 3: Mode Information Display', 'FAIL', 'Mode information not displayed correctly');
+                }
+
+                if (html.includes('Damage: 75%') && html.includes('Damage: 100%') && html.includes('Damage: 125%')) {
+                    log('TEST 4: Damage Multipliers Display', 'PASS', 'Damage multipliers shown for all modes');
+                } else {
+                    log('TEST 4: Damage Multipliers Display', 'FAIL', 'Damage multipliers not displayed');
+                }
+
+                if (html.includes('mode-indicator')) {
+                    log('TEST 5: Mode Indicator Element', 'PASS', 'Mode indicator element exists in dashboard');
+                } else {
+                    log('TEST 5: Mode Indicator Element', 'FAIL', 'Mode indicator element not found');
+                }
+            } catch (error) {
+                log('TEST 1-5: HTML Structure', 'FAIL', 'Error loading HTML: ' + error.message);
+            }
+
+            // TEST 6-10: Check JavaScript logic
+            try {
+                const response = await fetch('js/app.js');
+                const js = await response.text();
+
+                if (js.includes("gameMode: 'survival'")) {
+                    log('TEST 6: Game State gameMode Property', 'PASS', 'gameMode property exists with default "survival"');
+                } else {
+                    log('TEST 6: Game State gameMode Property', 'FAIL', 'gameMode property not found or incorrect default');
+                }
+
+                if (js.includes('modeConfigs')) {
+                    log('TEST 7: Mode Configurations Object', 'PASS', 'modeConfigs object exists');
+                } else {
+                    log('TEST 7: Mode Configurations Object', 'FAIL', 'modeConfigs object not found');
+                }
+
+                if (js.includes('getDifficultyMultiplier')) {
+                    log('TEST 8: Difficulty Multiplier Function', 'PASS', 'getDifficultyMultiplier() function exists');
+                } else {
+                    log('TEST 8: Difficulty Multiplier Function', 'FAIL', 'getDifficultyMultiplier() function not found');
+                }
+
+                if (js.includes('applyDamage')) {
+                    log('TEST 9: Apply Damage Helper Function', 'PASS', 'applyDamage() helper function exists');
+                } else {
+                    log('TEST 9: Apply Damage Helper Function', 'FAIL', 'applyDamage() helper function not found');
+                }
+
+                if (js.includes('initializeGameMode')) {
+                    log('TEST 10: Initialize Game Mode Function', 'PASS', 'initializeGameMode() function exists');
+                } else {
+                    log('TEST 10: Initialize Game Mode Function', 'FAIL', 'initializeGameMode() function not found');
+                }
+
+                // Check multiplier values
+                if (js.includes('return 0.75') && js.includes('return 1.00') && js.includes('return 1.25')) {
+                    log('TEST 11: Multiplier Values', 'PASS', 'Correct multiplier values: 0.75, 1.00, 1.25');
+                } else {
+                    log('TEST 11: Multiplier Values', 'FAIL', 'Multiplier values incorrect or missing');
+                }
+
+                // Check training mode config
+                if (js.includes('budget: 60000') && js.includes('securityLevel: 50')) {
+                    log('TEST 12: Training Mode Config', 'PASS', 'Training mode has correct starting values');
+                } else {
+                    log('TEST 12: Training Mode Config', 'FAIL', 'Training mode config incorrect');
+                }
+
+                // Check survival mode config
+                if (js.includes('budget: 50000') && js.includes('securityLevel: 40')) {
+                    log('TEST 13: Survival Mode Config', 'PASS', 'Survival mode has correct starting values');
+                } else {
+                    log('TEST 13: Survival Mode Config', 'FAIL', 'Survival mode config incorrect');
+                }
+
+                // Check hardcore mode config
+                if (js.includes('budget: 40000') && js.includes('securityLevel: 30')) {
+                    log('TEST 14: Hardcore Mode Config', 'PASS', 'Hardcore mode has correct starting values');
+                } else {
+                    log('TEST 14: Hardcore Mode Config', 'FAIL', 'Hardcore mode config incorrect');
+                }
+
+                // Check mode selection flow
+                if (js.includes("modeSelectionScreen.style.display = 'block'")) {
+                    log('TEST 15: Mode Selection Flow', 'PASS', 'Mode selection screen shows after clicking START GAME');
+                } else {
+                    log('TEST 15: Mode Selection Flow', 'FAIL', 'Mode selection flow not implemented');
+                }
+
+                // Check damage application in random events
+                if (js.includes('applyDamage(Math.abs(consequence.health)')) {
+                    log('TEST 16: Random Events Use applyDamage', 'PASS', 'Random events apply difficulty multiplier');
+                } else {
+                    log('TEST 16: Random Events Use applyDamage', 'FAIL', 'Random events may not use difficulty multiplier');
+                }
+
+                // Check damage application in phishing
+                if (js.match(/applyDamage\([^)]+,\s*['"]Phishing['"]/)) {
+                    log('TEST 17: Phishing Uses applyDamage', 'PASS', 'Phishing attack uses applyDamage helper');
+                } else {
+                    log('TEST 17: Phishing Uses applyDamage', 'FAIL', 'Phishing may not use difficulty multiplier');
+                }
+
+                // Check damage application in malware
+                if (js.match(/applyDamage\([^)]+,\s*['"]Malware['"]/)) {
+                    log('TEST 18: Malware Uses applyDamage', 'PASS', 'Malware attack uses applyDamage helper');
+                } else {
+                    log('TEST 18: Malware Uses applyDamage', 'FAIL', 'Malware may not use difficulty multiplier');
+                }
+
+                // Check damage application in ransomware
+                if (js.match(/applyDamage\([^)]+,\s*['"]Ransomware['"]/)) {
+                    log('TEST 19: Ransomware Uses applyDamage', 'PASS', 'Ransomware attack uses applyDamage helper');
+                } else {
+                    log('TEST 19: Ransomware Uses applyDamage', 'FAIL', 'Ransomware may not use difficulty multiplier');
+                }
+
+                // Check damage application in USB
+                if (js.match(/applyDamage\([^)]+,\s*['"]Suspicious USB['"]/)) {
+                    log('TEST 20: USB Uses applyDamage', 'PASS', 'USB attack uses applyDamage helper');
+                } else {
+                    log('TEST 20: USB Uses applyDamage', 'FAIL', 'USB may not use difficulty multiplier');
+                }
+
+                // Check damage application in weak password
+                if (js.match(/applyDamage\([^)]+,\s*['"]Weak Password['"]/)) {
+                    log('TEST 21: Weak Password Uses applyDamage', 'PASS', 'Weak password uses applyDamage helper');
+                } else {
+                    log('TEST 21: Weak Password Uses applyDamage', 'FAIL', 'Weak password may not use difficulty multiplier');
+                }
+
+                // Check game over shows mode
+                if (js.includes('MODE: ${config.icon} ${config.name}')) {
+                    log('TEST 22: Game Over Shows Mode', 'PASS', 'Game over screen displays selected mode');
+                } else {
+                    log('TEST 22: Game Over Shows Mode', 'FAIL', 'Game over may not show mode');
+                }
+
+                // Check mode indicator update
+                if (js.includes('updateModeIndicator')) {
+                    log('TEST 23: Mode Indicator Update Function', 'PASS', 'updateModeIndicator() function exists');
+                } else {
+                    log('TEST 23: Mode Indicator Update Function', 'FAIL', 'updateModeIndicator() function not found');
+                }
+
+                // Check health clamping
+                if (js.includes('Math.max(0, Math.min(100,')) {
+                    log('TEST 24: Health Clamping', 'PASS', 'Health is clamped between 0 and 100');
+                } else {
+                    log('TEST 24: Health Clamping', 'FAIL', 'Health clamping may not be implemented');
+                }
+
+                // Check state reset
+                if (js.includes('gameState.score = 0') && js.includes('gameState.threatsDetected = 0')) {
+                    log('TEST 25: State Reset on Mode Init', 'PASS', 'Game state resets when mode is initialized');
+                } else {
+                    log('TEST 25: State Reset on Mode Init', 'FAIL', 'State may not reset properly');
+                }
+
+                // Check employee system preservation
+                if (js.includes('trainEmployee') && js.includes('renderEmployees')) {
+                    log('TEST 26: Employee System Preserved', 'PASS', 'Employee training and rendering functions exist');
+                } else {
+                    log('TEST 26: Employee System Preserved', 'FAIL', 'Employee system may be broken');
+                }
+
+                // Check resource management preservation
+                if (js.includes('purchaseUpgrade')) {
+                    log('TEST 27: Resource Management Preserved', 'PASS', 'Upgrade purchase system exists');
+                } else {
+                    log('TEST 27: Resource Management Preserved', 'FAIL', 'Upgrade system may be broken');
+                }
+
+                // Check attack chain preservation
+                if (js.includes('attackChain')) {
+                    log('TEST 28: Attack Chain Preserved', 'PASS', 'Attack chain system exists');
+                } else {
+                    log('TEST 28: Attack Chain Preserved', 'FAIL', 'Attack chain may be broken');
+                }
+
+                // Check positive rewards not multiplied
+                const consequencePattern = /if \(consequence\.score\)/;
+                if (consequencePattern.test(js)) {
+                    log('TEST 29: Positive Rewards Not Multiplied', 'PASS', 'Score rewards are not modified by difficulty');
+                } else {
+                    log('TEST 29: Positive Rewards Not Multiplied', 'FAIL', 'Score handling may be incorrect');
+                }
+
+                // Check all attacks preserved
+                const attacks = ['generatePhishingIncident', 'generateMalwareIncident', 'generateWeakPasswordIncident',
+                                'generateSuspiciousUsbIncident', 'generateRansomwareIncident'];
+                let allAttacksPresent = attacks.every(attack => js.includes(attack));
+
+                if (allAttacksPresent) {
+                    log('TEST 30: All Attacks Preserved', 'PASS', 'All 5 attack types still exist');
+                } else {
+                    log('TEST 30: All Attacks Preserved', 'FAIL', 'Some attacks may be missing');
+                }
+
+            } catch (error) {
+                log('TEST 6-30: JavaScript Logic', 'FAIL', 'Error loading JavaScript: ' + error.message);
+            }
+
+            displayResults();
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>

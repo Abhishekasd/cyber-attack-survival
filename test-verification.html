@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Verification Tests</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #10b981;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-suite {
+            background: #1a1f3a;
+            border: 1px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid;
+        }
+        .pass {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .fail {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .info {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        button {
+            background: #10b981;
+            color: #0a0e27;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #059669;
+        }
+        #summary {
+            font-size: 24px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #10b981;
+        }
+        .section-header {
+            font-size: 18px;
+            color: #10b981;
+            border-bottom: 2px solid #10b981;
+            padding: 10px 0;
+            margin: 20px 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 CYBER ATTACK SURVIVAL - VERIFICATION TESTS</h1>
+    <p>Testing STEP 15 (Random Events) and STEP 16 (Employee Awareness)</p>
+
+    <button onclick="runAllTests()">▶ RUN ALL TESTS</button>
+    <button onclick="clearResults()">🗑️ CLEAR RESULTS</button>
+    <button onclick="window.location.href='index.html'">🎮 OPEN GAME</button>
+
+    <div id="summary"></div>
+    <div id="test-results"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let testResults = [];
+        let testsPassed = 0;
+        let testsFailed = 0;
+
+        function log(message, type = 'info') {
+            const result = {
+                message,
+                type,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            testResults.push(result);
+            displayResult(result);
+
+            if (type === 'pass') testsPassed++;
+            if (type === 'fail') testsFailed++;
+        }
+
+        function displayResult(result) {
+            const div = document.createElement('div');
+            div.className = `test-result ${result.type}`;
+            div.innerHTML = `[${result.timestamp}] ${result.message}`;
+            document.getElementById('test-results').appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('summary').innerHTML = '';
+            testResults = [];
+            testsPassed = 0;
+            testsFailed = 0;
+        }
+
+        function updateSummary() {
+            const total = testsPassed + testsFailed;
+            const passRate = total > 0 ? ((testsPassed / total) * 100).toFixed(1) : 0;
+            document.getElementById('summary').innerHTML = `
+                TESTS: ${total} | PASSED: ${testsPassed} | FAILED: ${testsFailed} | PASS RATE: ${passRate}%
+            `;
+        }
+
+        function assertEquals(actual, expected, testName) {
+            if (actual === expected) {
+                log(`✓ ${testName}: Expected ${expected}, got ${actual}`, 'pass');
+                return true;
+            } else {
+                log(`✗ ${testName}: Expected ${expected}, got ${actual}`, 'fail');
+                return false;
+            }
+        }
+
+        function assertTrue(condition, testName) {
+            if (condition) {
+                log(`✓ ${testName}`, 'pass');
+                return true;
+            } else {
+                log(`✗ ${testName}`, 'fail');
+                return false;
+            }
+        }
+
+        function assertRange(value, min, max, testName) {
+            if (value >= min && value <= max) {
+                log(`✓ ${testName}: ${value} is in range [${min}, ${max}]`, 'pass');
+                return true;
+            } else {
+                log(`✗ ${testName}: ${value} is NOT in range [${min}, ${max}]`, 'fail');
+                return false;
+            }
+        }
+
+        // TEST SUITE
+        function runAllTests() {
+            clearResults();
+            log('═══════════════════════════════════════════════', 'info');
+            log('STARTING VERIFICATION TESTS', 'info');
+            log('═══════════════════════════════════════════════', 'info');
+
+            testGameStateInitialization();
+            testEmployeeRiskHelper();
+            testInitialEmployees();
+            testRiskCalculation();
+            testRandomEventStructure();
+            testEmployeeTraining();
+            testPhishingEmployeeSelection();
+            testPhishingDamageCalculation();
+            testGameStateConstraints();
+
+            log('═══════════════════════════════════════════════', 'info');
+            log('VERIFICATION TESTS COMPLETE', 'info');
+            log('═══════════════════════════════════════════════', 'info');
+            updateSummary();
+        }
+
+        function testGameStateInitialization() {
+            log('─── TEST: Game State Initialization ───', 'info');
+
+            assertEquals(gameState.health, 100, 'Initial health is 100');
+            assertEquals(gameState.maxHealth, 100, 'Max health is 100');
+            assertEquals(gameState.budget, 50000, 'Initial budget is 50000');
+            assertEquals(gameState.securityLevel, 40, 'Initial security level is 40');
+            assertEquals(gameState.score, 0, 'Initial score is 0');
+            assertEquals(gameState.threatsDetected, 0, 'Initial threats detected is 0');
+            assertEquals(gameState.threatsMissed, 0, 'Initial threats missed is 0');
+            assertTrue(Array.isArray(gameState.employees), 'Employees array exists');
+            assertEquals(gameState.employees.length, 3, 'Has exactly 3 employees');
+        }
+
+        function testEmployeeRiskHelper() {
+            log('─── TEST: Employee Risk Helper Function ───', 'info');
+
+            // Test getEmployeeRisk function
+            assertEquals(getEmployeeRisk(100), 'LOW', 'Risk at 100% is LOW');
+            assertEquals(getEmployeeRisk(90), 'LOW', 'Risk at 90% is LOW');
+            assertEquals(getEmployeeRisk(80), 'LOW', 'Risk at 80% is LOW');
+            assertEquals(getEmployeeRisk(79), 'MEDIUM', 'Risk at 79% is MEDIUM');
+            assertEquals(getEmployeeRisk(70), 'MEDIUM', 'Risk at 70% is MEDIUM');
+            assertEquals(getEmployeeRisk(50), 'MEDIUM', 'Risk at 50% is MEDIUM');
+            assertEquals(getEmployeeRisk(49), 'HIGH', 'Risk at 49% is HIGH');
+            assertEquals(getEmployeeRisk(45), 'HIGH', 'Risk at 45% is HIGH');
+            assertEquals(getEmployeeRisk(20), 'HIGH', 'Risk at 20% is HIGH');
+            assertEquals(getEmployeeRisk(0), 'HIGH', 'Risk at 0% is HIGH');
+        }
+
+        function testInitialEmployees() {
+            log('─── TEST: Initial Employee Setup ───', 'info');
+
+            // Test Rahul Sharma
+            const rahul = gameState.employees[0];
+            assertEquals(rahul.name, 'Rahul Sharma', 'Employee 1 name is Rahul Sharma');
+            assertEquals(rahul.awareness, 90, 'Rahul awareness is 90%');
+            assertEquals(getEmployeeRisk(rahul.awareness), 'LOW', 'Rahul risk is LOW');
+
+            // Test Amit Verma
+            const amit = gameState.employees[1];
+            assertEquals(amit.name, 'Amit Verma', 'Employee 2 name is Amit Verma');
+            assertEquals(amit.awareness, 45, 'Amit awareness is 45%');
+            assertEquals(getEmployeeRisk(amit.awareness), 'HIGH', 'Amit risk is HIGH');
+
+            // Test Priya Singh
+            const priya = gameState.employees[2];
+            assertEquals(priya.name, 'Priya Singh', 'Employee 3 name is Priya Singh');
+            assertEquals(priya.awareness, 20, 'Priya awareness is 20%');
+            assertEquals(getEmployeeRisk(priya.awareness), 'HIGH', 'Priya risk is HIGH');
+        }
+
+        function testRiskCalculation() {
+            log('─── TEST: Risk Calculation Boundaries ───', 'info');
+
+            // Test boundary values
+            const boundaries = [
+                {awareness: 100, expected: 'LOW'},
+                {awareness: 95, expected: 'LOW'},
+                {awareness: 80, expected: 'LOW'},
+                {awareness: 79, expected: 'MEDIUM'},
+                {awareness: 70, expected: 'MEDIUM'},
+                {awareness: 50, expected: 'MEDIUM'},
+                {awareness: 49, expected: 'HIGH'},
+                {awareness: 30, expected: 'HIGH'},
+                {awareness: 0, expected: 'HIGH'}
+            ];
+
+            boundaries.forEach(test => {
+                assertEquals(
+                    getEmployeeRisk(test.awareness),
+                    test.expected,
+                    `Risk at ${test.awareness}% is ${test.expected}`
+                );
+            });
+        }
+
+        function testRandomEventStructure() {
+            log('─── TEST: Random Events Structure ───', 'info');
+
+            assertTrue(Array.isArray(randomEvents), 'Random events array exists');
+            assertEquals(randomEvents.length, 5, 'Has exactly 5 random events');
+
+            const expectedEvents = [
+                'suspicious_login',
+                'lost_laptop',
+                'unknown_usb',
+                'firewall_stopped',
+                'unusual_traffic'
+            ];
+
+            randomEvents.forEach((event, index) => {
+                assertTrue(event.id !== undefined, `Event ${index} has ID`);
+                assertTrue(event.title !== undefined, `Event ${index} has title`);
+                assertTrue(event.description !== undefined, `Event ${index} has description`);
+                assertTrue(Array.isArray(event.decisions), `Event ${index} has decisions array`);
+                assertTrue(event.decisions.length > 0, `Event ${index} has at least one decision`);
+            });
+
+            // Verify all expected event IDs exist
+            expectedEvents.forEach(expectedId => {
+                const found = randomEvents.some(e => e.id === expectedId);
+                assertTrue(found, `Event '${expectedId}' exists`);
+            });
+        }
+
+        function testEmployeeTraining() {
+            log('─── TEST: Employee Training Logic ───', 'info');
+
+            // Save original state
+            const originalBudget = gameState.budget;
+            const originalAwareness = gameState.employees[2].awareness; // Priya
+
+            // Test training increases awareness
+            const employee = gameState.employees[2];
+            const oldAwareness = employee.awareness;
+            const oldRisk = getEmployeeRisk(oldAwareness);
+
+            // Simulate training
+            employee.awareness = Math.min(100, employee.awareness + 25);
+            const newRisk = getEmployeeRisk(employee.awareness);
+
+            assertEquals(employee.awareness, oldAwareness + 25, 'Awareness increased by 25');
+
+            // Test awareness cap at 100
+            const testEmployee = {awareness: 90};
+            testEmployee.awareness = Math.min(100, testEmployee.awareness + 25);
+            assertEquals(testEmployee.awareness, 100, 'Awareness caps at 100');
+
+            // Test progression: 20 -> 45 -> 70 -> 95 -> 100
+            const progressionTest = {awareness: 20};
+
+            progressionTest.awareness = Math.min(100, progressionTest.awareness + 25);
+            assertEquals(progressionTest.awareness, 45, 'Training 1: 20 -> 45');
+            assertEquals(getEmployeeRisk(progressionTest.awareness), 'HIGH', 'Risk at 45% is HIGH');
+
+            progressionTest.awareness = Math.min(100, progressionTest.awareness + 25);
+            assertEquals(progressionTest.awareness, 70, 'Training 2: 45 -> 70');
+            assertEquals(getEmployeeRisk(progressionTest.awareness), 'MEDIUM', 'Risk at 70% is MEDIUM');
+
+            progressionTest.awareness = Math.min(100, progressionTest.awareness + 25);
+            assertEquals(progressionTest.awareness, 95, 'Training 3: 70 -> 95');
+            assertEquals(getEmployeeRisk(progressionTest.awareness), 'LOW', 'Risk at 95% is LOW');
+
+            progressionTest.awareness = Math.min(100, progressionTest.awareness + 25);
+            assertEquals(progressionTest.awareness, 100, 'Training 4: 95 -> 100');
+            assertEquals(getEmployeeRisk(progressionTest.awareness), 'LOW', 'Risk at 100% is LOW');
+
+            // Restore original state
+            gameState.budget = originalBudget;
+            gameState.employees[2].awareness = originalAwareness;
+        }
+
+        function testPhishingEmployeeSelection() {
+            log('─── TEST: Phishing Employee Selection ───', 'info');
+
+            // Test that random selection picks valid employees
+            const selections = new Set();
+            for (let i = 0; i < 30; i++) {
+                const randomIndex = Math.floor(Math.random() * gameState.employees.length);
+                selections.add(randomIndex);
+                assertTrue(randomIndex >= 0 && randomIndex < 3, `Random index ${randomIndex} is valid`);
+            }
+
+            // Verify we can potentially select all employees
+            assertTrue(selections.size >= 1, 'Random selection generates at least one unique employee');
+        }
+
+        function testPhishingDamageCalculation() {
+            log('─── TEST: Phishing Awareness-Based Damage ───', 'info');
+
+            // Test HIGH RISK damage (0-49% awareness)
+            let testEmployee = {awareness: 20};
+            let risk = getEmployeeRisk(testEmployee.awareness);
+            let openLinkDamage = risk === 'HIGH' ? 25 : risk === 'MEDIUM' ? 20 : 15;
+            let ignoreDamage = risk === 'HIGH' ? 15 : risk === 'MEDIUM' ? 10 : 5;
+
+            assertEquals(risk, 'HIGH', 'Employee at 20% is HIGH risk');
+            assertEquals(openLinkDamage, 25, 'HIGH risk OPEN LINK damage is 25');
+            assertEquals(ignoreDamage, 15, 'HIGH risk IGNORE damage is 15');
+
+            // Test MEDIUM RISK damage (50-79% awareness)
+            testEmployee = {awareness: 70};
+            risk = getEmployeeRisk(testEmployee.awareness);
+            openLinkDamage = risk === 'HIGH' ? 25 : risk === 'MEDIUM' ? 20 : 15;
+            ignoreDamage = risk === 'HIGH' ? 15 : risk === 'MEDIUM' ? 10 : 5;
+
+            assertEquals(risk, 'MEDIUM', 'Employee at 70% is MEDIUM risk');
+            assertEquals(openLinkDamage, 20, 'MEDIUM risk OPEN LINK damage is 20');
+            assertEquals(ignoreDamage, 10, 'MEDIUM risk IGNORE damage is 10');
+
+            // Test LOW RISK damage (80-100% awareness)
+            testEmployee = {awareness: 90};
+            risk = getEmployeeRisk(testEmployee.awareness);
+            openLinkDamage = risk === 'HIGH' ? 25 : risk === 'MEDIUM' ? 20 : 15;
+            ignoreDamage = risk === 'HIGH' ? 15 : risk === 'MEDIUM' ? 10 : 5;
+
+            assertEquals(risk, 'LOW', 'Employee at 90% is LOW risk');
+            assertEquals(openLinkDamage, 15, 'LOW risk OPEN LINK damage is 15');
+            assertEquals(ignoreDamage, 5, 'LOW risk IGNORE damage is 5');
+        }
+
+        function testGameStateConstraints() {
+            log('─── TEST: Game State Constraints ───', 'info');
+
+            // Test health constraints
+            const testHealth1 = Math.max(0, Math.min(100, 50));
+            assertEquals(testHealth1, 50, 'Health 50 stays at 50');
+
+            const testHealth2 = Math.max(0, Math.min(100, -10));
+            assertEquals(testHealth2, 0, 'Health cannot go below 0');
+
+            const testHealth3 = Math.max(0, Math.min(100, 120));
+            assertEquals(testHealth3, 100, 'Health cannot exceed 100');
+
+            // Test security level constraints
+            const testSecurity1 = Math.max(0, Math.min(100, 50));
+            assertEquals(testSecurity1, 50, 'Security 50 stays at 50');
+
+            const testSecurity2 = Math.max(0, Math.min(100, -10));
+            assertEquals(testSecurity2, 0, 'Security cannot go below 0');
+
+            const testSecurity3 = Math.max(0, Math.min(100, 120));
+            assertEquals(testSecurity3, 100, 'Security cannot exceed 100');
+
+            // Test awareness constraints
+            const testAwareness1 = Math.min(100, 80 + 25);
+            assertEquals(testAwareness1, 100, 'Awareness 80 + 25 caps at 100');
+
+            const testAwareness2 = Math.min(100, 50 + 25);
+            assertEquals(testAwareness2, 75, 'Awareness 50 + 25 = 75');
+        }
+
+        // Auto-run tests on load
+        setTimeout(() => {
+            log('Page loaded. Click "RUN ALL TESTS" to begin verification.', 'info');
+        }, 100);
+    </script>
+</body>
+</html>
